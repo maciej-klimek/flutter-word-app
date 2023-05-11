@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,19 +8,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'English-Polish Word List',
+      title: 'WordApp',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: const Color.fromARGB(255, 53, 53, 53),
         ),
       ),
-      home: MyHomePage(title: 'English-Polish Word List'),
+      home: const MyHomePage(title: 'WordApp'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -31,16 +31,20 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final List<Map<String, String>> _wordList = [];
 
-  void _addWordItem(String word, String translation) {
+  void _addWord(String word, String translation) {
     setState(() {
       _wordList.add({'word': word, 'translation': translation});
     });
   }
 
-  void _removeWordItem(int index) {
+  void _removeWord(int index) {
     setState(() {
       _wordList.removeAt(index);
     });
+  }
+
+  void _editWord(int index, String newWord, String newTranslation) {
+    _wordList[index] = {'word': newWord, 'translation': newTranslation};
   }
 
   void _showAddWordDialog() {
@@ -63,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: translationInput,
-                decoration: InputDecoration(hintText: 'Translation'),
+                decoration: const InputDecoration(hintText: 'Translation'),
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
@@ -71,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   String word = wordInput.text;
                   String translation = translationInput.text;
-                  _addWordItem(word, translation);
+                  _addWord(word, translation);
                   Navigator.pop(context);
                 },
               ),
@@ -96,11 +100,22 @@ class _MyHomePageState extends State<MyHomePage> {
           return ListTile(
             title: Text(word),
             subtitle: Text(translation),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                _removeWordItem(index);
-              },
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    _editWord(index, word, translation);
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  onPressed: () {
+                    _removeWord(index);
+                  },
+                ),
+              ],
             ),
           );
         },
