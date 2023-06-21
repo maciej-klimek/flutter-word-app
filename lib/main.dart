@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:flutter/material.dart';
 
 void main() => runApp(const MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -33,13 +34,13 @@ class GroupPage extends StatefulWidget {
 class _GroupPage extends State<GroupPage> {
   final List<Map<String, String>> _wordList = [];
 
-  void _addWordItem(String word, String translation) {
+  void _addWord(String word, String translation) {
     setState(() {
       _wordList.add({'word': word, 'translation': translation});
     });
   }
 
-  void _removeWordItem(int index) {
+  void _removeWord(int index) {
     setState(() {
       _wordList.removeAt(index);
     });
@@ -86,7 +87,7 @@ class _GroupPage extends State<GroupPage> {
                   String translation = translationInput.text;
                   if (word == "" || translation == "") {}
                   if (newWord) {
-                    _addWordItem(word, translation);
+                    _addWord(word, translation);
                   } else {
                     _editWordItem(index, word, translation);
                   }
@@ -117,7 +118,7 @@ class _GroupPage extends State<GroupPage> {
               trailing: IconButton(
                 icon: const Icon(Icons.delete),
                 onPressed: () {
-                  _removeWordItem(index);
+                  _removeWord(index);
                 },
               ),
               onTap: () {
