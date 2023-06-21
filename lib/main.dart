@@ -1,6 +1,8 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,27 +10,27 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'English-Polish Word List',
+      title: 'Word app',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSwatch().copyWith(
           primary: const Color.fromARGB(255, 53, 53, 53),
         ),
       ),
-      home: MyHomePage(title: 'English-Polish Word List'),
+      home: const GroupPage(title: 'Word App'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
+class GroupPage extends StatefulWidget {
+  const GroupPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  State<GroupPage> createState() => _GroupPage();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _GroupPage extends State<GroupPage> {
   final List<Map<String, String>> _wordList = [];
 
   void _addWordItem(String word, String translation) {
@@ -43,9 +45,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _showAddWordDialog() {
+  void _editWordItem(int index, String word, String translation) {
+    setState(() {
+      _wordList[index]['word'] = word;
+      _wordList[index]['translation'] = translation;
+    });
+  }
+
+  void _showAddWordDialog(
+      String word, String translation, bool newWord, int index) {
     TextEditingController wordInput = TextEditingController();
     TextEditingController translationInput = TextEditingController();
+
+    wordInput.text = word;
+    translationInput.text = translation;
 
     showModalBottomSheet(
       context: context,
@@ -63,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
               const SizedBox(height: 16.0),
               TextField(
                 controller: translationInput,
-                decoration: InputDecoration(hintText: 'Translation'),
+                decoration: const InputDecoration(hintText: 'Translation'),
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
@@ -71,7 +84,12 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () {
                   String word = wordInput.text;
                   String translation = translationInput.text;
-                  _addWordItem(word, translation);
+                  if (word == "" || translation == "") {}
+                  if (newWord) {
+                    _addWordItem(word, translation);
+                  } else {
+                    _editWordItem(index, word, translation);
+                  }
                   Navigator.pop(context);
                 },
               ),
@@ -94,19 +112,23 @@ class _MyHomePageState extends State<MyHomePage> {
           String word = _wordList[index]['word']!;
           String translation = _wordList[index]['translation']!;
           return ListTile(
-            title: Text(word),
-            subtitle: Text(translation),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete),
-              onPressed: () {
-                _removeWordItem(index);
-              },
-            ),
-          );
+              title: Text(word),
+              subtitle: Text(translation),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete),
+                onPressed: () {
+                  _removeWordItem(index);
+                },
+              ),
+              onTap: () {
+                _showAddWordDialog(word, translation, false, index);
+              });
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showAddWordDialog,
+        onPressed: () {
+          _showAddWordDialog("", "", true, 0);
+        },
         tooltip: 'Add Word',
         backgroundColor: const Color.fromARGB(255, 53, 53, 53),
         child: const Icon(Icons.add),
